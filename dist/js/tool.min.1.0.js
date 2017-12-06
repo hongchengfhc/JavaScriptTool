@@ -473,7 +473,7 @@
     tool.setStorage = function(objName, objValue, time) {
         time = time || 'd180';
         var strsec = getsec(time);
-        var nowTime = tool.dateUtil.getDateTime(4) - 0;
+        var nowTime = dateUtil.getDateTime(4) - 0;
         var setTime = nowTime + strsec / 1000;
         var obj = {};
         obj['maxage'] = setTime;
@@ -506,7 +506,7 @@
             var ret = JSON.parse(sto.getItem(objName));
             if(ret) {
                 var maxage = ret['maxage'] - 0;
-                var nowTime = tool.dateUtil.getDateTime(4) - 0;
+                var nowTime = dateUtil.getDateTime(4) - 0;
                 if(maxage - nowTime >= 0) {
                     resu = ret['value'];
                 } else {
