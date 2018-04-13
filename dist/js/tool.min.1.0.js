@@ -146,32 +146,39 @@
      * @param {Object} obj
      * @description 克隆一个对象
      * */
-    tool.clone = function(obj) {
-        // Handle the 3 simple types, and null or undefined
-        if(null == obj || "object" != typeof obj) return obj;
+    tool.clone=function(obj2) {
+        return clone2(obj2)
+        function clone2(obj){
+            // Handle the 3 simple types, and null or undefined
+            if (null == obj || "object" != typeof obj) return obj;
 
-        // Handle Date
-        if(obj instanceof Date) {
-            var copy = new Date();
-            copy.setTime(obj.getTime());
-            return copy;
-        }
-
-        // Handle Array
-        if(obj instanceof Array) {
-            var copy = [];
-            for(var i = 0, len = obj.length; i < len; ++i) {
-                copy[i] = Object.assign({},obj[i]);
+            // Handle Date
+            if (obj instanceof Date) {
+                var copy = new Date();
+                copy.setTime(obj.getTime());
+                return copy;
             }
-            return copy;
-        }
 
-        // Handle Object
-        if(obj instanceof Object) {
-            return Object.assign({},obj);
+            // Handle Array
+            if (obj instanceof Array) {
+                var copy = [];
+                for (var i = 0, len = obj.length; i < len; ++i) {
+                    copy[i] = clone2(obj[i])
+                }
+                return copy;
+            }
+
+            // Handle Object
+            if (obj instanceof Object) {
+                var copy = {}
+                for(var attr in obj){
+                    if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+                }
+            }
+            console.warn("Unable to copy obj! Its type isn't supported.");
+            throw new Error("Unable to copy obj! Its type isn't supported.");
+            return null;
         }
-        console.warn("Unable to copy obj! Its type isn't supported.");
-        throw new Error("Unable to copy obj! Its type isn't supported.");
     };
 
     /**
