@@ -6,11 +6,6 @@
 })(window);
 /*================================================ 常用宏定义 ==============================================*/
 (function(tool){
-    screenW = function(){return screen.width;};    //屏幕分辨率
-    screenH = function(){return screen.height;};   //屏幕分辨率
-    clientW = function(){return document.body.clientWidth;};   //可见区域宽
-    clientH = function(){return document.body.clientHeight;};  //可见区域高
-
     //随机数
     randNum=function(){
         var param = arguments;
@@ -148,9 +143,9 @@
         }, data.interval);
     };
     /*
-	 * @param {Object} obj
-	 * @description 克隆一个对象
-	 * */
+     * @param {Object} obj
+     * @description 克隆一个对象
+     * */
     tool.clone = function(obj) {
         // Handle the 3 simple types, and null or undefined
         if(null == obj || "object" != typeof obj) return obj;
@@ -585,62 +580,70 @@
     /**
      * @description 得到浏览器
      * */
-    tool.myBrowser = function() {
-        var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-        var ua = {};
-        var isOpera = userAgent.indexOf("Opera") > -1;
+    tool.myBrowser = function () {
+        let userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+        let ua = {};
+        let isOpera = userAgent.indexOf("Opera") > -1;
         //判断是否Opera浏览器
         ua.isOpera = isOpera;
         //判断是否Firefox浏览器
-        var isFirefox = userAgent.indexOf("Firefox") > -1;
+        let isFirefox = userAgent.indexOf("Firefox") > -1;
         ua.isFirefox = isFirefox;
         //判断是否Chrome浏览器
-        var isChrome = userAgent.indexOf("Chrome") > -1;
+        let isChrome = userAgent.indexOf("Chrome") > -1;
         ua.isChrome = isChrome;
         //判断是否Safari浏览器
-        var isSafari = userAgent.indexOf("Safari") > -1;
+        let isSafari = userAgent.indexOf("Safari") > -1;
         ua.isSafari = isSafari;
-        if(isChrome === isSafari){
+        if (isChrome === isSafari) {
             ua.isSafari = false;
         }
-        var isIE = false;
-        var isIE_1_10 = false;
-        var IEVersion = -1;
-        var isEdge = false;
-        var isIE11 = false;
+        let isIE = false;
+        let isIE_1_10 = false;
+        let IEVersion = -1;
+        let isEdge = false;
+        let isIE11 = false;
         if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera) {
             isIE = true;
             isIE_1_10 = true;
             //判断是IE几
-            var browser = navigator.appName;
-            var b_version = navigator.appVersion;
-            var version = b_version.split(';');
-            var IENAME = "Microsoft Internet Explorer";
+            let browser = navigator.appName;
+            let b_version = navigator.appVersion;
+            let version = b_version.split(';');
+            let IENAME = "Microsoft Internet Explorer";
 
-            var trim_Version = version[1].replace(/[ ]/g, "");
+            let trim_Version = version[1].replace(/[ ]/g, "");
 
-            if (IENAME == browser && trim_Version == "MSIE6.0") IEVersion = 6;
-            else if (IENAME == browser && trim_Version == "MSIE7.0") IEVersion = 7;
-            else if (IENAME == browser && trim_Version == "MSIE8.0") IEVersion = 8;
-            else if (IENAME == browser && trim_Version == "MSIE9.0") IEVersion = 9;
+            if (IENAME === browser && trim_Version === "MSIE6.0") IEVersion = 6;
+            else if (IENAME === browser && trim_Version === "MSIE7.0") IEVersion = 7;
+            else if (IENAME === browser && trim_Version === "MSIE8.0") IEVersion = 8;
+            else if (IENAME === browser && trim_Version === "MSIE9.0") IEVersion = 9;
             else IEVersion = 10;
             // return "IE";
-        }; //判断是否IE浏览器
+        } //判断是否IE浏览器
         if (!!window.ActiveXObject || 'ActiveXObject' in window) {
-            var _isEdge = userAgent.indexOf('Edge') > -1 && !isIE;
-            var _isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf('rv:11.0') > -1;
+            let _isEdge = userAgent.indexOf('Edge') > -1 && !isIE;
+            let _isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf('rv:11.0') > -1;
             isEdge = _isEdge;
             isIE11 = _isIE11;
             isIE = true;
-            if(isIE11)IEVersion=11;
+            if (isIE11) IEVersion = 11;
         }
         ua.isIE = isIE;
         ua.isIE_1_10 = isIE_1_10;
         ua.IEVersion = IEVersion;
         ua.isEdge = isEdge;
         ua.isIE11 = isIE11;
+        ua.appType = 'browser';
+        let userA = userAgent.toLocaleLowerCase();
+        let a = userA.match(/Alipay/i);
+        let b = userA.match(/MicroMessenger/i);
+        if (a&& a[0] === 'alipay')
+            ua.appType = 'alipay';
+        else if (b && b[0] === 'micromessenger')
+            ua.appType = 'micromessenger';
         return ua;
-    }
+    };
     /**
      * @description 判断是否支持ontouchstart触摸屏事件
      * */
@@ -4305,7 +4308,7 @@
      * @param {String} sId
      * @return Object
      */
-    tool.cardId.getCardIdInfo=function(cardId){
+    tool.cardId.getCardIdInfo=function(cardId,datestr){
         var aCity = {
             11: "北京",
             12: "天津",
@@ -4356,6 +4359,7 @@
             year:"",
             month:"",
             day:"",
+            days:"",
             old:"",
             sex:"其它"
         };
@@ -4397,7 +4401,14 @@
         obj.month = timestr.split('-')[1];
         obj.day = timestr.split('-')[2];
         obj.sex = (cardId.substr(16,1)%2?"男":"女");
-        obj.old = yearMinus(new Date(timestr),new Date());
+
+        datestr = datestr || new Date();
+        let yearMObj = yearMinus(new Date(timestr), new Date(datestr));
+        obj.old = yearMObj.year;
+        obj.oldAfterMonth = yearMObj.oldAfterMonth;
+        obj.oldAfterMonthDay = yearMObj.oldAfterMonthDay;
+        obj.days = Math.floor((new Date(datestr)-new Date(timestr))/(1000 * 60 * 60 * 24));
+
         function yearMinus(startDate, endDate){
             var y1 = startDate.getFullYear();
             var m1 = startDate.getMonth()+1;
@@ -4407,15 +4418,25 @@
             var m2 = endDate.getMonth()+1;
             var d2  =endDate.getDate();
 
-            var year = y2 - y1;
-            if(m1>m2){
+            let year = y2 - y1;
+            let oldAfterMonth = 0;
+            let oldAfterMonthDay = 0;
+            if (m1 > m2) {
                 year--;
-            }else if(m1===m2){
-                if(d1>d2){
+            } else if (m1 === m2) {
+                if (d1 > d2) {
                     year--;
+                }else{
+                    oldAfterMonthDay = d2 - d1;
                 }
-            }else{}
-            return year;
+            } else {
+
+                oldAfterMonth = m2 - m1;
+                oldAfterMonthDay = d2 - d1;
+            }
+            return {
+                year,oldAfterMonth,oldAfterMonthDay
+            };
         }
         // var a=aCity[parseInt(cardId.substr(0,2))]+","+sBirthday+","+(cardId.substr(16,1)%2?"男":"女");//此次还可以判断出输入的身份证号的人性别
         return obj;
@@ -4475,6 +4496,32 @@
 /*================================================ dateUtil日期处理 ==============================================*/
 (function(tool){
     tool.dateUtil = {};
+    tool.dateUtil.dateDesc=function(mdate){
+
+        var cha = new Date().getTime() - new Date(mdate).getTime();
+        cha = Math.floor(cha / 1000);
+        console.log(cha);
+        if(cha<60){   //小于60s
+            return '刚刚'
+        }
+        if(cha<3600){  //小于1小时
+            var m = Math.floor(cha%60);
+            return m+'分钟前';
+        }
+        if(cha<86400){  //小于1天的
+            var h =Math.floor(cha/3600);
+            return h+'小时前'
+        }
+        if(cha<31536000){  //小于1年的
+            mdate = mdate.split(' ')[0];
+            var m = mdate.split('-')[1];
+            var d = mdate.split('-')[2];
+            return m+'-'+d;
+        }
+        mdate = mdate.split(' ')[0];
+        mdate = mdate.substr(2);
+        return mdate;
+    }
     /**
      * @param {String} date
      * @description 得到当前日期是星期几
@@ -4833,41 +4880,53 @@
     /**
      * @return {Number} index
      */
-    Array.prototype.findObjIndex=function(key,val){
-        var index = -1;
-        for(var i=0;i<this.length;i++){
-            var dict = this[i];
-            if(typeof(dict)==='object'){
-                if(dict.hasOwnProperty(key) && dict[key] === val){
-                    index = i;
-                    break;
+    Object.defineProperty(Array.prototype, 'findObjIndex', {
+        value: function (key, val) {
+            let index = -1;
+            for (let i = 0; i < this.length; i++) {
+                let dict = this[i];
+                if (typeof(dict) === 'object') {
+                    if (dict.hasOwnProperty(key) && dict[key] === val) {
+                        index = i;
+                        break;
+                    }
+                } else {
+                    index = -1;
                 }
-            }else{
-                index = -1;
             }
+            return index;
         }
-        return index;
-    };
+    });
     /*
     * @description 清空数组
     */
-    Array.prototype.removeAll=function(){
-        this.splice(0,this.length);
-    };
+    Object.defineProperty(Array.prototype, 'removeAll', {
+        value: function () {
+            this.splice(0, this.length);
+        }
+    });
     /*
     * @description 删除数组中的指定下标元素
     */
-    Array.prototype.removeAtIndex=function(index){
-        if(isNaN(index)||index>this.length){return false;}
-        this.splice(index,1);
-    };
+    Object.defineProperty(Array.prototype, 'removeAtIndex', {
+        value: function (index) {
+            if (isNaN(index) || index > this.length) {
+                return false;
+            }
+            this.splice(index, 1);
+        }
+    });
     /*
     * @description 插件元素到指定下村
     */
-    Array.prototype.pushItemAtIndex=function(item,index){
-        if(isNaN(index)||index>this.length){return false;}
-        this.splice(index,0,item);
-    };
+    Object.defineProperty(Array.prototype, 'pushItemAtIndex', {
+        value: function (item, index) {
+            if (isNaN(index) || index > this.length) {
+                return false;
+            }
+            this.splice(index, 0, item);
+        }
+    });
 
 })(window);
 /*================================================ Object 分类 ==============================================*/
@@ -4891,37 +4950,38 @@
      * @param  {String} cstr - URL-param字符串
      * @return Object
      */
-    Object.objectWithURLQuery=function(cstr){
-        cstr = cstr || location.search;
-        var search = cstr.replace(/^\s+/,'').replace(/\s+$/,'').match(/([^?#]*)(#.*)?$/);//提取location.search中'?'后面的部分
-        if(!search){
-            return {};
-        }
-        var searchStr = search[1];
-        var searchHash = searchStr.split('&');
+    Object.defineProperty(Object, 'objectWithURLQuery', {
+        value: function (cstr) {
+            cstr = cstr || location.search;
+            let search = cstr.replace(/^\s+/, '').replace(/\s+$/, '').match(/([^?#]*)(#.*)?$/);//提取location.search中'?'后面的部分
+            if (!search) {
+                return {};
+            }
+            let searchStr = search[1];
+            let searchHash = searchStr.split('&');
 
-        var ret = {};
-        for(var i = 0, len = searchHash.length; i < len; i++){ //这里可以调用each方法
-            var pair = searchHash[i];
-            if((pair = pair.split('='))[0]){
-                var key = decodeURIComponent(pair.shift());
-                var value = pair.length > 1 ? pair.join('=') : pair[0];
-                console.log()
-                if(value != undefined){
-                    value = decodeURIComponent(value);
-                }
-                if(key in ret){
-                    if(ret[key].constructor != Array){
-                        ret[key] = [ret[key]];
+            let ret = {};
+            for (let i = 0, len = searchHash.length; i < len; i++) { //这里可以调用each方法
+                let pair = searchHash[i];
+                if ((pair = pair.split('='))[0]) {
+                    let key = decodeURIComponent(pair.shift());
+                    let value = pair.length > 1 ? pair.join('=') : pair[0];
+                    if (value !== undefined) {
+                        value = decodeURIComponent(value);
                     }
-                    ret[key].push(value);
-                }else{
-                    ret[key] = value;
+                    if (key in ret) {
+                        if (ret[key].constructor !== Array) {
+                            ret[key] = [ret[key]];
+                        }
+                        ret[key].push(value);
+                    } else {
+                        ret[key] = value;
+                    }
                 }
             }
+            return ret;
         }
-        return ret;
-    };
+    });
 })(window);
 /*================================================ Date分类 ==============================================*/
 (function(tool){
@@ -4935,21 +4995,23 @@
      * @param {String} fmt
      * @return String
      */
-    Date.prototype.dateFormat = function (fmt) { //author: meizz
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "h+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    };
+    Object.defineProperty(Date.prototype, 'dateFormat', {
+        value: function (fmt) {
+            let o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (let k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+    });
     /** * 对Date的扩展，将 Date 转化为指定格式的String * 月(M)、日(d)、12小时(h)、24小时(H)、分(m)、秒(s)、周(E)、季度(q)
      可以用 1-2 个占位符 * 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) * eg: * (new
      Date()).pattern("yyyy-MM-dd hh:mm:ss.S")==> 2006-07-02 08:09:04.423
@@ -4958,42 +5020,43 @@
      * (new Date()).pattern("yyyy-MM-dd EEE hh:mm:ss") ==> 2009-03-10 星期二 08:09:04
      * (new Date()).pattern("yyyy-M-d h:m:s.S") ==> 2006-7-2 8:9:4.18
      */
-    Date.prototype.datePattern=function(fmt) {
-        var o = {
-            "M+" : this.getMonth()+1, //月份
-            "d+" : this.getDate(), //日
-            "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时
-            "H+" : this.getHours(), //小时
-            "m+" : this.getMinutes(), //分
-            "s+" : this.getSeconds(), //秒
-            "q+" : Math.floor((this.getMonth()+3)/3), //季度
-            "S" : this.getMilliseconds() //毫秒
-        };
-        var week = {
-            "0" : "/u65e5",
-            "1" : "/u4e00",
-            "2" : "/u4e8c",
-            "3" : "/u4e09",
-            "4" : "/u56db",
-            "5" : "/u4e94",
-            "6" : "/u516d"
-        };
+    Object.defineProperty(Date.prototype, 'datePattern', {
+        value: function (fmt) {
+            let o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours() % 12 === 0 ? 12 : this.getHours() % 12, //小时
+                "H+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            let week = {
+                "0": "/u65e5",
+                "1": "/u4e00",
+                "2": "/u4e8c",
+                "3": "/u4e09",
+                "4": "/u56db",
+                "5": "/u4e94",
+                "6": "/u516d"
+            };
 
-        if(/(y+)/.test(fmt)){
-            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
-        }
-        if(/(E+)/.test(fmt)){
-            fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[this.getDay()+""]);
-            fmt=unescape(fmt.replace(/\u/g, '%u')).replace(/\//g,'');
-        }
-        for(var k in o){
-            if(new RegExp("("+ k +")").test(fmt)){
-                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+            if (/(y+)/.test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
             }
+            if (/(E+)/.test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, ((RegExp.$1.length > 1) ? (RegExp.$1.length > 2 ? "/u661f/u671f" : "/u5468") : "") + week[this.getDay() + ""]);
+                fmt = unescape(fmt.replace(/\u/g, '%u')).replace(/\//g, '');
+            }
+            for (let k in o) {
+                if (new RegExp("(" + k + ")").test(fmt)) {
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                }
+            }
+            return fmt;
         }
-        return fmt;
-    };
-
+    });
     /*
      * 方法作用：【计算2个日期之间的天数】
      * 传入格式：yyyy-mm-dd(2015-01-31)
@@ -5001,14 +5064,15 @@
      * @endDate {Date}结束日期
      * @return endDate - startDate的天数差
      */
-    Date.dayMinus=function(startDate, endDate){
-        if(startDate instanceof Date && endDate instanceof Date){
-            var days = Math.floor((endDate-startDate)/(1000 * 60 * 60 * 24));
-            return days;
-        }else{
-            return "Param error,date type!";
+    Object.defineProperty(Date, 'dayMinus', {
+        value: function (startDate, endDate) {
+            if (startDate instanceof Date && endDate instanceof Date) {
+                return Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+            } else {
+                return "Param error,date type!";
+            }
         }
-    };
+    });
     /*
      * 方法作用：【计算2个日期之间的年数】
      * 传入格式：yyyy-mm-dd(2015-01-31)
@@ -5016,25 +5080,28 @@
      * @endDate {Date}结束日期
      * @return endDate - startDate的年数差
      */
-    Date.yearMinus=function(startDate, endDate){
-        var y1 = startDate.getFullYear();
-        var m1 = startDate.getMonth()+1;
-        var d1  =startDate.getDate();
+    Object.defineProperty(Date, 'yearMinus', {
+        value: function (startDate, endDate) {
+            let y1 = startDate.getFullYear();
+            let m1 = startDate.getMonth() + 1;
+            let d1 = startDate.getDate();
 
-        var y2 = endDate.getFullYear();
-        var m2 = endDate.getMonth()+1;
-        var d2  =endDate.getDate();
+            let y2 = endDate.getFullYear();
+            let m2 = endDate.getMonth() + 1;
+            let d2 = endDate.getDate();
 
-        var year = y2 - y1;
-        if(m1>m2){
-            year--;
-        }else if(m1===m2){
-            if(d1>d2){
+            let year = y2 - y1;
+            if (m1 > m2) {
                 year--;
+            } else if (m1 === m2) {
+                if (d1 > d2) {
+                    year--;
+                }
+            } else {
             }
-        }else{}
-        return year;
-    };
+            return year;
+        }
+    });
 
 
 })(window);
@@ -5046,215 +5113,409 @@
      * @description 得到随机姓名
      * @return String
      */
-    String.getRandName=function(type){
-        type = type || 1;
-        var familyNames = new Array();
-        var comFamilyNames = new Array();
-        var cstr1 =
-            "赵,钱,孙,李,周,吴,郑,王,冯,陈,"+
-            "褚,卫,蒋,沈,韩,杨,朱,秦,尤,许,"+
-            "何,吕,施,张,孔,曹,严,华,金,魏,"+
-            "陶,姜,戚,谢,邹,喻,柏,水,窦,章,"+
-            "云,苏,潘,葛,奚,范,彭,郎,鲁,韦,"+
-            "昌,马,苗,凤,花,方,俞,任,袁,柳,"+
-            "酆,鲍,史,唐,费,廉,岑,薛,雷,贺,"+
-            "倪,汤,滕,殷,罗,毕,郝,邬,安,常,"+
-            "乐,于,时,傅,皮,卞,齐,康,伍,余,"+
-            "元,卜,顾,孟,平,黄,和,穆,萧,尹";
-        familyNames = cstr1.split(',');
-        var cstr3 =
-            "司马,诸葛,呼延,欧阳,太史,端木,上官," +
-            "东方,南宫,尉迟,宇文,长孙,司徒,令狐," +
-            "公孙,慕容,百里,东郭,达奚,拓跋,申屠";
-        comFamilyNames = cstr3.split(',');
-        var givenNames = new Array();
-        var cstr2 = "子璇,淼,国栋,夫子,瑞堂,甜,敏,尚,国贤,贺祥,晨涛,"+
-            "昊轩,易轩,益辰,益帆,益冉,瑾春,瑾昆,春齐,杨,文昊,"+
-            "东东,雄霖,浩晨,熙涵,溶溶,冰枫,欣欣,宜豪,欣慧,建政,"+
-            "美欣,淑慧,文轩,文杰,欣源,忠林,榕润,欣汝,慧嘉,新建,"+
-            "建林,亦菲,林,冰洁,佳欣,涵涵,禹辰,淳美,泽惠,伟洋,"+
-            "涵越,润丽,翔,淑华,晶莹,凌晶,苒溪,雨涵,嘉怡,佳毅,"+
-            "子辰,佳琪,紫轩,瑞辰,昕蕊,萌,明远,欣宜,泽远,欣怡,"+
-            "佳怡,佳惠,晨茜,晨璐,运昊,汝鑫,淑君,晶滢,润莎,榕汕,"+
-            "佳钰,佳玉,晓庆,一鸣,语晨,添池,添昊,雨泽,雅晗,雅涵,"+
-            "清妍,诗悦,嘉乐,晨涵,天赫,玥傲,佳昊,天昊,萌萌,若萌";
-        givenNames=cstr2.split(',');
-        if(type!==1)familyNames = comFamilyNames;
-        var i = Math.floor(familyNames.length*Math.random());
-        var familyName = familyNames[i];
+    Object.defineProperty(String, 'getRandName', {
+        value: function (type) {
+            type = type || 1;
+            let cstr1 =
+                "赵,钱,孙,李,周,吴,郑,王,冯,陈," +
+                "褚,卫,蒋,沈,韩,杨,朱,秦,尤,许," +
+                "何,吕,施,张,孔,曹,严,华,金,魏," +
+                "陶,姜,戚,谢,邹,喻,柏,水,窦,章," +
+                "云,苏,潘,葛,奚,范,彭,郎,鲁,韦," +
+                "昌,马,苗,凤,花,方,俞,任,袁,柳," +
+                "酆,鲍,史,唐,费,廉,岑,薛,雷,贺," +
+                "倪,汤,滕,殷,罗,毕,郝,邬,安,常," +
+                "乐,于,时,傅,皮,卞,齐,康,伍,余," +
+                "元,卜,顾,孟,平,黄,和,穆,萧,尹";
+            let familyNames = cstr1.split(',');
+            let cstr3 =
+                "司马,诸葛,呼延,欧阳,太史,端木,上官," +
+                "东方,南宫,尉迟,宇文,长孙,司徒,令狐," +
+                "公孙,慕容,百里,东郭,达奚,拓跋,申屠";
+            let comFamilyNames = cstr3.split(',');
+            let cstr2 = "子璇,淼,国栋,夫子,瑞堂,甜,敏,尚,国贤,贺祥,晨涛," +
+                "昊轩,易轩,益辰,益帆,益冉,瑾春,瑾昆,春齐,杨,文昊," +
+                "东东,雄霖,浩晨,熙涵,溶溶,冰枫,欣欣,宜豪,欣慧,建政," +
+                "美欣,淑慧,文轩,文杰,欣源,忠林,榕润,欣汝,慧嘉,新建," +
+                "建林,亦菲,林,冰洁,佳欣,涵涵,禹辰,淳美,泽惠,伟洋," +
+                "涵越,润丽,翔,淑华,晶莹,凌晶,苒溪,雨涵,嘉怡,佳毅," +
+                "子辰,佳琪,紫轩,瑞辰,昕蕊,萌,明远,欣宜,泽远,欣怡," +
+                "佳怡,佳惠,晨茜,晨璐,运昊,汝鑫,淑君,晶滢,润莎,榕汕," +
+                "佳钰,佳玉,晓庆,一鸣,语晨,添池,添昊,雨泽,雅晗,雅涵," +
+                "清妍,诗悦,嘉乐,晨涵,天赫,玥傲,佳昊,天昊,萌萌,若萌";
+            let givenNames = cstr2.split(',');
+            if (type !== 1) familyNames = comFamilyNames;
+            let i = Math.floor(familyNames.length * Math.random());
+            let familyName = familyNames[i];
 
-        var j = Math.floor(givenNames.length*Math.random());
-        var givenName = givenNames[j];
-        var name = familyName + givenName;
-        return name;
-    };
+            let j = Math.floor(givenNames.length * Math.random());
+            let givenName = givenNames[j];
+            return familyName + givenName;
+        }
+    });
+
     /**
      * @description 得到随机手机号
      * @return String
      */
-    String.getRandMobile=function(){
-        var prefixArray = new Array("130", "131", "132", "133", "135", "137", "138", "170", "187", "189");
-        var i = parseInt(10 * Math.random());
-        var prefix = prefixArray[i];
-        for (var j = 0; j < 8; j++) {
-            prefix = prefix + Math.floor(Math.random() * 10);
+    Object.defineProperty(String, 'getRandMobile', {
+        value: function () {
+            let prefixArray = ["130", "131", "132", "133", "135", "137", "138", "170", "187", "189"];
+            let i = parseInt(10 * Math.random());
+            let prefix = prefixArray[i];
+            for (let j = 0; j < 8; j++) {
+                prefix = prefix + Math.floor(Math.random() * 10);
+            }
+            return prefix;
         }
-        return prefix;
-    };
-
+    });
     /**
      * @description 得到uuid
      */
-    String.getUUID = function() {
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return(c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
-    };
-
+    Object.defineProperty(String, 'getUUID', {
+        value: function () {
+            let d = new Date().getTime();
+            let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                let r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
+        }
+    });
     /**
      * @param {Number} len
      * @description 得到随机字符串
      * */
-    String.getRdStr = function(len) {
-        len = len || 1;
-        var rdmString = "";
-        for(; rdmString.length < len; rdmString += Math.random().toString(36).substr(2));
-        return rdmString.substr(0, len);
-    };
+    Object.defineProperty(String, 'getRdStr', {
+        value: function (len) {
+            len = len || 1;
+            let rdmString = "";
+            for (; rdmString.length < len; rdmString += Math.random().toString(36).substr(2)) ;
+            return rdmString.substr(0, len);
+        }
+    });
+    /**
+     * @param {Number} num
+     * @description 比如： 1：一  11：十一  101：一百零一
+     * */
+    Object.defineProperty(String,'numberToChinese',{
+        value: function(num){
+            var AA = new Array("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十");
+            var BB = new Array("", "十", "百", "仟", "萬", "億", "点", "");
+            var a = ("" + num).replace(/(^0*)/g, "").split("."),
+                k = 0,
+                re = "";
+            for(var i = a[0].length - 1; i >= 0; i--) {
+                switch(k) {
+                    case 0:
+                        re = BB[7] + re;
+                        break;
+                    case 4:
+                        if(!new RegExp("0{4}//d{" + (a[0].length - i - 1) + "}$")
+                                .test(a[0]))
+                            re = BB[4] + re;
+                        break;
+                    case 8:
+                        re = BB[5] + re;
+                        BB[7] = BB[5];
+                        k = 0;
+                        break;
+                }
+                if(k % 4 == 2 && a[0].charAt(i + 2) != 0 && a[0].charAt(i + 1) == 0)
+                    re = AA[0] + re;
+                if(a[0].charAt(i) != 0)
+                    re = AA[a[0].charAt(i)] + BB[k % 4] + re;
+                k++;
+            }
+
+            if(a.length > 1) // 加上小数部分(如果有小数部分)
+            {
+                re += BB[6];
+                for(var i = 0; i < a[1].length; i++)
+                    re += AA[a[1].charAt(i)];
+            }
+            if(re == '一十')
+                re = "十";
+            if(re.match(/^一/) && re.length == 3)
+                re = re.replace("一", "");
+            return re;
+        }
+    })
+    /**
+     * @param {Number} num
+     * @description 比如： 20304 贰万零叁佰零肆元贰角
+     * */
+    Object.defineProperty(String,'moneyToChinese',{
+        value: function(Num){
+            //判断如果传递进来的不是字符的话转换为字符
+            if(typeof Num == "number") {
+                Num = new String(Num);
+            };
+            Num = Num.replace(/,/g, "") //替换tomoney()中的“,”
+            Num = Num.replace(/ /g, "") //替换tomoney()中的空格
+            Num = Num.replace(/￥/g, "") //替换掉可能出现的￥字符
+            if(isNaN(Num)) { //验证输入的字符是否为数字
+                //alert("请检查小写金额是否正确");
+                return "";
+            };
+            //字符处理完毕后开始转换，采用前后两部分分别转换
+            var part = String(Num).split(".");
+            var newchar = "";
+            //小数点前进行转化
+            for(var i = part[0].length - 1; i >= 0; i--) {
+                if(part[0].length > 10) {
+                    return "";
+                    //若数量超过拾亿单位，提示
+                }
+                var tmpnewchar = ""
+                var perchar = part[0].charAt(i);
+                switch(perchar) {
+                    case "0":
+                        tmpnewchar = "零" + tmpnewchar;
+                        break;
+                    case "1":
+                        tmpnewchar = "壹" + tmpnewchar;
+                        break;
+                    case "2":
+                        tmpnewchar = "贰" + tmpnewchar;
+                        break;
+                    case "3":
+                        tmpnewchar = "叁" + tmpnewchar;
+                        break;
+                    case "4":
+                        tmpnewchar = "肆" + tmpnewchar;
+                        break;
+                    case "5":
+                        tmpnewchar = "伍" + tmpnewchar;
+                        break;
+                    case "6":
+                        tmpnewchar = "陆" + tmpnewchar;
+                        break;
+                    case "7":
+                        tmpnewchar = "柒" + tmpnewchar;
+                        break;
+                    case "8":
+                        tmpnewchar = "捌" + tmpnewchar;
+                        break;
+                    case "9":
+                        tmpnewchar = "玖" + tmpnewchar;
+                        break;
+                }
+                switch(part[0].length - i - 1) {
+                    case 0:
+                        tmpnewchar = tmpnewchar + "元";
+                        break;
+                    case 1:
+                        if(perchar != 0) tmpnewchar = tmpnewchar + "拾";
+                        break;
+                    case 2:
+                        if(perchar != 0) tmpnewchar = tmpnewchar + "佰";
+                        break;
+                    case 3:
+                        if(perchar != 0) tmpnewchar = tmpnewchar + "仟";
+                        break;
+                    case 4:
+                        tmpnewchar = tmpnewchar + "万";
+                        break;
+                    case 5:
+                        if(perchar != 0) tmpnewchar = tmpnewchar + "拾";
+                        break;
+                    case 6:
+                        if(perchar != 0) tmpnewchar = tmpnewchar + "佰";
+                        break;
+                    case 7:
+                        if(perchar != 0) tmpnewchar = tmpnewchar + "仟";
+                        break;
+                    case 8:
+                        tmpnewchar = tmpnewchar + "亿";
+                        break;
+                    case 9:
+                        tmpnewchar = tmpnewchar + "拾";
+                        break;
+                }
+                var newchar = tmpnewchar + newchar;
+            }
+            //小数点之后进行转化
+            if(Num.indexOf(".") != -1) {
+                if(part[1].length > 2) {
+                    // alert("小数点之后只能保留两位,系统将自动截断");
+                    part[1] = part[1].substr(0, 2)
+                }
+                for(i = 0; i < part[1].length; i++) {
+                    tmpnewchar = ""
+                    perchar = part[1].charAt(i)
+                    switch(perchar) {
+                        case "0":
+                            tmpnewchar = "零" + tmpnewchar;
+                            break;
+                        case "1":
+                            tmpnewchar = "壹" + tmpnewchar;
+                            break;
+                        case "2":
+                            tmpnewchar = "贰" + tmpnewchar;
+                            break;
+                        case "3":
+                            tmpnewchar = "叁" + tmpnewchar;
+                            break;
+                        case "4":
+                            tmpnewchar = "肆" + tmpnewchar;
+                            break;
+                        case "5":
+                            tmpnewchar = "伍" + tmpnewchar;
+                            break;
+                        case "6":
+                            tmpnewchar = "陆" + tmpnewchar;
+                            break;
+                        case "7":
+                            tmpnewchar = "柒" + tmpnewchar;
+                            break;
+                        case "8":
+                            tmpnewchar = "捌" + tmpnewchar;
+                            break;
+                        case "9":
+                            tmpnewchar = "玖" + tmpnewchar;
+                            break;
+                    }
+                    if(i == 0) tmpnewchar = tmpnewchar + "角";
+                    if(i == 1) tmpnewchar = tmpnewchar + "分";
+                    newchar = newchar + tmpnewchar;
+                }
+            }
+            //替换所有无用汉字
+            while(newchar.search("零零") != -1)
+                newchar = newchar.replace("零零", "零");
+            newchar = newchar.replace("零亿", "亿");
+            newchar = newchar.replace("亿万", "亿");
+            newchar = newchar.replace("零万", "万");
+            newchar = newchar.replace("零元", "元");
+            newchar = newchar.replace("零角", "");
+            newchar = newchar.replace("零分", "");
+            if(newchar.charAt(newchar.length - 1) == "元") {
+                newchar = newchar + "整"
+            }
+            return newchar;
+        }
+    })
     /*================================================ (String 实例方法) ==============================================*/
     /**
      * 将字符串拼接
      * @return
      */
-    String.prototype.format = function() {
-        if(arguments.length === 0) return this;
-        var param = arguments[0];
-        var s = this;
-        if(typeof(param) === 'object') {
-            for(var key in param)
-                s = s.replace(new RegExp("\\{" + key + "\\}", "g"), param[key]);
-            return s;
-        } else {
-            for(var i = 0; i < arguments.length; i++)
-                s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
-            return s;
+    Object.defineProperty(String.prototype, 'format', {
+        value: function () {
+            if (arguments.length === 0) return this;
+            let param = arguments[0];
+            let s = this;
+            if (typeof(param) === 'object') {
+                for (let key in param)
+                    s = s.replace(new RegExp("\\{" + key + "\\}", "g"), param[key]);
+                return s;
+            } else {
+                for (let i = 0; i < arguments.length; i++)
+                    s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
+                return s;
+            }
         }
-    };
+    });
 
     /**
      * 保留中文
      * @return String
      */
-    String.prototype.onlyHaveCN= function() {
-        var regEx = /[^\u4e00-\u9fa5\uf900-\ufa2d]/g;
-        return this.replace(regEx, '');
-    };
+    Object.defineProperty(String.prototype, 'onlyHaveCN', {
+        value: function () {
+            let regEx = /[^\u4e00-\u9fa5\uf900-\ufa2d]/g;
+            return this.replace(regEx, '');
+        }
+    });
     /**
      * 统计含有的子字符串的个数
      * @return String
      */
-    String.prototype.countMatches=function(sub) {
-        if(this.isEmpty(this) || this.isEmpty(sub)) {
-            return 0;
+    Object.defineProperty(String.prototype, 'countMatches', {
+        value: function (sub) {
+            if (this.isEmpty(this) || this.isEmpty(sub)) {
+                return 0;
+            }
+            let count = 0;
+            let index = 0;
+            while ((index === this.indexOf(sub, index)) !== -1) {
+                index += sub.length;
+                count++;
+            }
+            return count;
         }
-        var count = 0;
-        var index = 0;
-        while((index == this.indexOf(sub, index)) !== -1) {
-            index += sub.length;
-            count++;
-        }
-        return count;
-    };
-    /**
-     * 将字符串转换成数字
-     * @param val
-     * @return Number
-     */
-    String.prototype.Number=function(val){
-        return Number(val);
-    };
+    });
 
     /**
      * 判断字符串是否为空，若为空则返回true否则返回false
      * @return true或者false
      **/
-    String.prototype.isEmpty=function(){
-        var str = this.replace(/(^\s*)|(\s*$)/g,"");
-        if(str==="" || str.toLowerCase()==="null" || str.length<=0){
-            return true;
-        }else{
-            return false;
+    Object.defineProperty(String.prototype, 'isEmpty', {
+        value: function () {
+            let str = this.replace(/(^\s*)|(\s*$)/g, "");
+            if (str === "" || str.toLowerCase() === "null" || str.length <= 0) {
+                return true;
+            } else {
+                return false;
+            }
+
         }
-    };
+    });
     /**
      * 判断是否是中文
      * @returns {Boolean}
      */
-    String.prototype.isChine=function(){
-        var reg = /^([u4E00-u9FA5]|[uFE30-uFFA0])*$/;
-        if(reg.test(this)){
-            return false;
+    Object.defineProperty(String.prototype, 'isChine', {
+        value: function () {
+            let reg = /^([u4E00-u9FA5]|[uFE30-uFFA0])*$/;
+            if (reg.test(this)) {
+                return false;
+            }
+            return true;
         }
-        return true;
-    };
-    //字符串编码
-    String.prototype.Encode=function(){
-        return encodeURIComponent(this);
-    };
-    //字符串解码
-    String.prototype.Decode=function(){
-        return decodeURIComponent(this);
-    };
-    /**
-     * 字符串转正型
-     * @returns
-     */
-    String.prototype.Int=function(){
-        if(this.isEmpty(this) || isNaN(this)){
-            return parseInt(0);
+    });
+//字符串编码
+    Object.defineProperty(String.prototype, 'Encode', {
+        value: function () {
+            return encodeURIComponent(this);
         }
-        return parseInt(this);
-    };
-    /**
-     * 字符串转Float形
-     * @param len
-     * @return Float
-     */
-    String.prototype.Float=function(len){
-        len = len || 2;
-        if(this.isEmpty(this) || isNaN(this)){
-            return parseFloat(0);
+    });
+//字符串解码
+    Object.defineProperty(String.prototype, 'Decode', {
+        value: function () {
+            return decodeURIComponent(this);
         }
-        return parseFloat(this).toFixed(len);
-    };
+    });
     /**
      * 将一个字符串用给定的字符变成数组
      * @param tag
      * @return Array
      */
-    String.prototype.Array = function(tag) {
-        tag = tag || ',';
-        if (this.indexOf(tag) !== -1) {
-            return this.split(tag);
-        }else {
-            if (this !== '') {
-                return [this.toString()];
-            }else {
-                return [];
+    Object.defineProperty(String.prototype, 'Array', {
+        value: function (tag) {
+            tag = tag || ',';
+            if (this.indexOf(tag) !== -1) {
+                return this.split(tag);
+            } else {
+                if (this !== '') {
+                    return [this.toString()];
+                } else {
+                    return [];
+                }
             }
         }
-    };
+    });
     /**
      * 字符串替换全部
      * @return String
      */
-    String.prototype.replaceAll = function(s1,s2){
-        return this.replace(new RegExp(s1,'gm'),s2);
-    };
+    Object.defineProperty(String.prototype, 'replaceAll', {
+        value: function (s1, s2) {
+            return this.replace(new RegExp(s1, 'gm'), s2);
+        }
+    });
 
 
 
