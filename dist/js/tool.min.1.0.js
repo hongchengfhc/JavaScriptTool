@@ -172,8 +172,9 @@
             if (obj instanceof Object) {
                 var copy = {}
                 for(var attr in obj){
-                    if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+                    if (obj.hasOwnProperty(attr)) copy[attr] = clone2(obj[attr]);
                 }
+                return copy;
             }
             console.warn("Unable to copy obj! Its type isn't supported.");
             throw new Error("Unable to copy obj! Its type isn't supported.");
