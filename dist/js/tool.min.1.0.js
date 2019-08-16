@@ -66,7 +66,7 @@
 	 * @return baseApi
 	 * */
 	tool.config.getBaseApi=function(){
-		return "http://www.baidu.com";
+		return "http://10.32.16.107:10901";
 	};
 	/**
 	 * @return version
@@ -257,7 +257,7 @@
 				success: function(res_data) {
 					tool.ZZLog(res_data);
 					if(param.success){
-						param.success(res_data);
+						param.success(res_data,$(this));
 					}
 				},
 				error: function(e) {
@@ -277,7 +277,7 @@
 				success: function(res_data) {
 					tool.ZZLog(res_data);
 					if(param.success){
-						param.success(res_data);
+						param.success(res_data,$(this));
 					}
 				},
 				error: function(e) {
@@ -317,9 +317,14 @@
 				ajaxData.complete(xhr);
 				if(xhr.status == 200) {
 					if(typeof(xhr.response) == 'object') {
-						ajaxData.success(xhr.response);
+						ajaxData.success(xhr.response, xhr);
 					} else {
-						ajaxData.success(JSON.parse(xhr.response));
+						try {
+							ajaxData.success(JSON.parse(xhr.response), xhr);
+						} catch (e) {
+							ajaxData.success(xhr.response, xhr);
+						}
+						
 					}
 				} else {
 					ajaxData.error(xhr, xhr.statusText);
@@ -360,6 +365,36 @@
 			return(c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
 		});
 		return uuid;
+	};
+	tool.copyText = function(text) {
+		var doms = document.querySelectorAll('.copy_0831');
+		[].forEach.call(doms, x => {
+			document.body.removeChild(x);
+		});
+		var dom = document.createElement('div');
+		dom.style = '-webkit-user-select: text;user-select: text;';
+		dom.innerHTML = text;
+		document.body.appendChild(dom);
+	
+		var copyDOM = dom;  //要复制文字的节点
+		var range = document.createRange();    
+		// 选中需要复制的节点
+		range.selectNode(copyDOM);  
+		// 执行选中元素
+		window.getSelection().addRange(range);  
+		// 执行 copy 操作
+		var successful = document.execCommand('Copy');    
+		try {    
+			var msg = successful ? 'successful' : 'unsuccessful'; 
+			console.log('copy is  ' + msg);
+		} catch(err) {    
+			console.log('Oops, unable to copy');
+		}  
+		dom.className = 'copy_0831';
+		dom.style.display = 'none';
+		// 移除选中的元素
+		window.getSelection().removeAllRanges();  
+		return successful;
 	};
 
 	/**
@@ -4500,7 +4535,7 @@
 		return id_no_String;
 	};
 
-})(window);
+})(tool);
 /*================================================ dateUtil日期处理 ==============================================*/
 (function(tool){
 	tool.dateUtil = {};
@@ -5168,7 +5203,7 @@
 				"佳钰,佳玉,晓庆,一鸣,语晨,添池,添昊,雨泽,雅晗,雅涵," +
 				"清妍,诗悦,嘉乐,晨涵,天赫,玥傲,佳昊,天昊,萌萌,若萌";
 			let givenNames = cstr2.split(',');
-			if (type !== 1) familyNames = comFamilyNames;
+			if (type != 1) familyNames = comFamilyNames;
 			let i = Math.floor(familyNames.length * Math.random());
 			let familyName = familyNames[i];
 
@@ -5177,7 +5212,71 @@
 			return familyName + givenName;
 		}
 	});
-
+// 得到随机银行卡号
+	Object.defineProperty(String, 'getBankCard', {
+		value: function (bank_no = '0102') {
+		    var prefix = "";
+		    switch (bank_no) {
+		    case "0102":
+		        prefix = "622202";  // 工商银行
+		        break;
+		    case "0103":
+		        prefix = "622848";  // 农业银行
+		        break;
+		    case "0105":
+		        prefix = "622700";  // 中国建设银行
+		        break;
+		    case "0301":
+		        prefix = "622262";  // 中国交通银行借记卡
+		        break;
+		    case "104":
+		        prefix = "621661";  // 中国银行借记卡
+		        break;
+		    case "0303":
+		        prefix = "622666";  // 光大银行借记卡
+		        break;
+		    case "305":
+		        prefix = "622622";  // 中国民生银行
+		        break;
+		    case "0306":
+		        prefix = "622556";  // 广发银行
+		        break;
+		    case "0308":
+		        prefix = "622588";  // 中国招商银行借记卡
+		        break;
+		    case "0410":
+		        prefix = "622155";  // 平安股份有限公司银行贷记卡
+		        break;
+		    case "302":
+		        prefix = "622689";  // 中信银行
+		        break;
+		    case "304":
+		        prefix = "622630";  // 华夏银行借记卡
+		        break;
+		    case "309": 
+		        prefix = "622908";  // 兴业银行
+		        break;
+		    case "310":
+		        prefix = "621717";  // ??
+		        break;
+		    case "315":
+		        prefix = "622323";  // 常熟农村商业银行
+		        break;
+		    case "316":
+		        prefix = "622309";  // 中国工商银行借记卡
+		        break;
+		    default:
+		    }
+		    var num = 13;
+		    if (['0410'].indexOf(bank_no) != -1) {
+		    	num = 10
+		    }
+		    for (var j = 0; j < num; j++) {
+		        prefix = prefix + Math.floor(Math.random() * 10);
+		    }
+		    return prefix;
+		}
+	})
 	/**
 	 * @description 得到随机手机号
 	 * @return String
